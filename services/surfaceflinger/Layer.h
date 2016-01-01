@@ -71,7 +71,9 @@ class Layer : public SurfaceFlingerConsumer::ContentsChangedListener {
     static int32_t sSequence;
 
 public:
+#ifdef QTI_BSP
     friend class ExLayer;
+#endif
     mutable bool contentDirty;
     // regions below are in window-manager space
     Region visibleRegion;
@@ -296,6 +298,10 @@ public:
     virtual void setPosition(const sp<const DisplayDevice>& /*hw*/,
                              HWComposer::HWCLayerInterface& /*layer*/,
                              const State& /*state*/) { }
+    virtual void setAcquiredFenceIfBlit(int& /*fenceFd */,
+                       HWComposer::HWCLayerInterface& /*layer */) { }
+    virtual bool canAllowGPUForProtected() const { return false; }
+
 
     /*
      * returns the rectangle that crops the content of the layer and scales it

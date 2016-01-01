@@ -84,7 +84,9 @@ class SurfaceFlinger : public BnSurfaceComposer,
                        private HWComposer::EventHandler
 {
 public:
+#ifdef QTI_BSP
     friend class ExSurfaceFlinger;
+#endif
 
     static char const* getServiceName() ANDROID_API {
         return "SurfaceFlinger";
@@ -210,7 +212,8 @@ private:
             const sp<IGraphicBufferProducer>& producer,
             Rect sourceCrop, uint32_t reqWidth, uint32_t reqHeight,
             uint32_t minLayerZ, uint32_t maxLayerZ,
-            bool useIdentityTransform, ISurfaceComposer::Rotation rotation);
+            bool useIdentityTransform, ISurfaceComposer::Rotation rotation,
+            bool isCpuConsumer);
     virtual status_t getDisplayStats(const sp<IBinder>& display,
             DisplayStatInfo* stats);
     virtual status_t getDisplayConfigs(const sp<IBinder>& display,
@@ -269,6 +272,11 @@ private:
                      const int32_t& /*id*/) { }
 
     virtual void updateVisibleRegionsDirty() { }
+
+    virtual void  drawWormHoleIfRequired(HWComposer::LayerListIterator &cur,
+        const HWComposer::LayerListIterator &end,
+        const sp<const DisplayDevice>& hw,
+        const Region& region);
     /* ------------------------------------------------------------------------
      * Message handling
      */
@@ -364,7 +372,8 @@ private:
             const sp<IGraphicBufferProducer>& producer,
             Rect sourceCrop, uint32_t reqWidth, uint32_t reqHeight,
             uint32_t minLayerZ, uint32_t maxLayerZ,
-            bool useIdentityTransform, Transform::orientation_flags rotation);
+            bool useIdentityTransform, Transform::orientation_flags rotation,
+            bool useReadPixels);
 
     /* ------------------------------------------------------------------------
      * EGL
